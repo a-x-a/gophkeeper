@@ -54,8 +54,6 @@ func New() (*Config, error) {
 		"postgres://postgres:postgres@127.0.0.1:5432/goph?sslmode=disable",
 	)
 
-	// NB (alkurbatov): Separate flagset is used to avoid "flag already set"
-	// conflicts in unit tests.
 	flag := pflag.FlagSet{}
 	flag.String("address", "", "address:port the service listens on")
 	flag.String("database-uri", "", "full Postgres database connection URI")
