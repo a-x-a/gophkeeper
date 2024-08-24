@@ -4,7 +4,7 @@
 
 set -euxo pipefail
 
-proto_src=api/proto
+proto_src=api/proto/v1
 proto_dst=pkg/goph
 docs_dst=docs/api
 
