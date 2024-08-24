@@ -14,7 +14,7 @@ import (
 
 // UsersServer provides implementation of the Users API.
 type UsersServer struct {
-	goph.UnimplementedUsersServer
+	goph.UnimplementedUsersServiceServer
 
 	usersUseCase usecase.Users
 }
@@ -27,8 +27,8 @@ func NewUsersServer(users usecase.Users) *UsersServer {
 // Register creates new user.
 func (s UsersServer) Register(
 	ctx context.Context,
-	req *goph.RegisterUserRequest,
-) (*goph.RegisterUserResponse, error) {
+	req *goph.RegisterRequest,
+) (*goph.RegisterResponse, error) {
 	username := req.GetUsername()
 	key := req.GetSecurityKey()
 
@@ -47,5 +47,5 @@ func (s UsersServer) Register(
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	return &goph.RegisterUserResponse{AccessToken: accessToken.String()}, nil
+	return &goph.RegisterResponse{AccessToken: accessToken.String()}, nil
 }

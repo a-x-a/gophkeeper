@@ -26,7 +26,7 @@ const (
 )
 
 // Run initializes and starts the keeper service.
-func Run(cfg *config.Config) error { //nolint:funlen // no sense to split main Run function
+func Run(cfg *config.Config) error {
 	log, err := logger.New(cfg.LogLevel)
 	if err != nil {
 		return fmt.Errorf("app - Run - logger.New: %w", err)

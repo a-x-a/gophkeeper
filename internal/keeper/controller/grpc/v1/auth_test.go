@@ -33,7 +33,7 @@ func TestLoginUser(t *testing.T) {
 		SecurityKey: gophtest.SecurityKey,
 	}
 
-	client := goph.NewAuthClient(conn)
+	client := goph.NewAuthServiceClient(conn)
 	resp, err := client.Login(context.Background(), req)
 
 	require.NoError(t, err)
@@ -73,7 +73,7 @@ func TestLoginWithBadRequest(t *testing.T) {
 				SecurityKey: tc.key,
 			}
 
-			client := goph.NewAuthClient(conn)
+			client := goph.NewAuthServiceClient(conn)
 			_, err := client.Login(context.Background(), req)
 
 			requireEqualCode(t, codes.InvalidArgument, err)
@@ -117,7 +117,7 @@ func TestLoginOnUseCaseFailure(t *testing.T) {
 				SecurityKey: gophtest.SecurityKey,
 			}
 
-			client := goph.NewAuthClient(conn)
+			client := goph.NewAuthServiceClient(conn)
 			_, err := client.Login(context.Background(), req)
 
 			requireEqualCode(t, tc.expected, err)

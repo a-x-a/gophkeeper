@@ -79,7 +79,7 @@ func TestCreateSecret(t *testing.T) {
 		WithArgs(
 			owner,
 			gophtest.SecretName,
-			goph.DataKind_TEXT,
+			goph.DataKind_DATA_KIND_TEXT,
 			[]byte(gophtest.Metadata),
 			[]byte(gophtest.TextData),
 		).
@@ -91,7 +91,7 @@ func TestCreateSecret(t *testing.T) {
 		context.Background(),
 		owner,
 		gophtest.SecretName,
-		goph.DataKind_TEXT,
+		goph.DataKind_DATA_KIND_TEXT,
 		[]byte(gophtest.Metadata),
 		[]byte(gophtest.TextData),
 	)
@@ -129,7 +129,7 @@ func TestCreateSecretOnDBFailure(t *testing.T) {
 				WithArgs(
 					owner,
 					gophtest.SecretName,
-					goph.DataKind_TEXT,
+					goph.DataKind_DATA_KIND_TEXT,
 					[]byte(gophtest.Metadata),
 					[]byte(gophtest.TextData),
 				).
@@ -141,7 +141,7 @@ func TestCreateSecretOnDBFailure(t *testing.T) {
 				context.Background(),
 				owner,
 				gophtest.SecretName,
-				goph.DataKind_TEXT,
+				goph.DataKind_DATA_KIND_TEXT,
 				[]byte(gophtest.Metadata),
 				[]byte(gophtest.TextData),
 			)
@@ -160,8 +160,8 @@ func TestListSecrets(t *testing.T) {
 		{
 			name: "List secrets of a user",
 			rows: [][]any{
-				{uuid.NewV4().String(), gophtest.SecretName, goph.DataKind_TEXT, []byte("xxx")},
-				{uuid.NewV4().String(), gophtest.SecretName + "ex", goph.DataKind_BINARY, []byte{}},
+				{uuid.NewV4().String(), gophtest.SecretName, goph.DataKind_DATA_KIND_TEXT, []byte("xxx")},
+				{uuid.NewV4().String(), gophtest.SecretName + "ex", goph.DataKind_DATA_KIND_BINARY, []byte{}},
 			},
 		},
 		{
@@ -215,7 +215,7 @@ func TestGetSecret(t *testing.T) {
 	expected := &entity.Secret{
 		ID:       uuid.NewV4(),
 		Name:     gophtest.SecretName,
-		Kind:     goph.DataKind_TEXT,
+		Kind:     goph.DataKind_DATA_KIND_TEXT,
 		Metadata: []byte(gophtest.Metadata),
 		Data:     []byte(gophtest.TextData),
 	}

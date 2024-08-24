@@ -44,12 +44,12 @@ func TestRegisterUser(t *testing.T) {
 
 			conn := createTestServer(t, m)
 
-			req := &goph.RegisterUserRequest{
+			req := &goph.RegisterRequest{
 				Username:    tc.userName,
 				SecurityKey: gophtest.SecurityKey,
 			}
 
-			client := goph.NewUsersClient(conn)
+			client := goph.NewUsersServiceClient(conn)
 			resp, err := client.Register(context.Background(), req)
 
 			require.NoError(t, err)
@@ -86,12 +86,12 @@ func TestRegisterUserWithBadRequest(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			conn := createTestServer(t, newUseCasesMock())
 
-			req := &goph.RegisterUserRequest{
+			req := &goph.RegisterRequest{
 				Username:    tc.username,
 				SecurityKey: tc.key,
 			}
 
-			client := goph.NewUsersClient(conn)
+			client := goph.NewUsersServiceClient(conn)
 			_, err := client.Register(context.Background(), req)
 
 			requireEqualCode(t, codes.InvalidArgument, err)
@@ -130,12 +130,12 @@ func TestRegisterUserOnUseCaseFailure(t *testing.T) {
 
 			conn := createTestServer(t, m)
 
-			req := &goph.RegisterUserRequest{
+			req := &goph.RegisterRequest{
 				Username:    gophtest.Username,
 				SecurityKey: gophtest.SecurityKey,
 			}
 
-			client := goph.NewUsersClient(conn)
+			client := goph.NewUsersServiceClient(conn)
 			_, err := client.Register(context.Background(), req)
 
 			requireEqualCode(t, tc.expected, err)

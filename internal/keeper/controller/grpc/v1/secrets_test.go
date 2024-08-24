@@ -23,7 +23,7 @@ func doListSecrets(
 	t *testing.T,
 	mockRV []entity.Secret,
 	mockErr error,
-) (*goph.ListSecretsResponse, error) {
+) (*goph.ListResponse, error) {
 	t.Helper()
 
 	m := newUseCasesMock()
@@ -35,9 +35,9 @@ func doListSecrets(
 		Return(mockRV, mockErr)
 
 	conn := createTestServerWithFakeAuth(t, m)
-	req := &goph.ListSecretsRequest{}
+	req := &goph.ListRequest{}
 
-	client := goph.NewSecretsClient(conn)
+	client := goph.NewSecretsServiceClient(conn)
 	rv, err := client.List(context.Background(), req)
 
 	m.Secrets.(*usecase.SecretsUseCaseMock).AssertExpectations(t)
@@ -49,7 +49,7 @@ func doGetSecret(
 	t *testing.T,
 	mockRV *entity.Secret,
 	mockErr error,
-) (*goph.GetSecretResponse, error) {
+) (*goph.GetResponse, error) {
 	t.Helper()
 
 	m := newUseCasesMock()
@@ -62,9 +62,9 @@ func doGetSecret(
 		Return(mockRV, mockErr)
 
 	conn := createTestServerWithFakeAuth(t, m)
-	req := &goph.GetSecretRequest{Id: uuid.NewV4().String()}
+	req := &goph.GetRequest{Id: uuid.NewV4().String()}
 
-	client := goph.NewSecretsClient(conn)
+	client := goph.NewSecretsServiceClient(conn)
 	rv, err := client.Get(context.Background(), req)
 
 	m.Secrets.(*usecase.SecretsUseCaseMock).AssertExpectations(t)
@@ -75,7 +75,7 @@ func doGetSecret(
 func doDeleteSecret(
 	t *testing.T,
 	mockErr error,
-) (*goph.DeleteSecretResponse, error) {
+) (*goph.DeleteResponse, error) {
 	t.Helper()
 
 	m := newUseCasesMock()
@@ -88,9 +88,9 @@ func doDeleteSecret(
 		Return(mockErr)
 
 	conn := createTestServerWithFakeAuth(t, m)
-	req := &goph.DeleteSecretRequest{Id: uuid.NewV4().String()}
+	req := &goph.DeleteRequest{Id: uuid.NewV4().String()}
 
-	client := goph.NewSecretsClient(conn)
+	client := goph.NewSecretsServiceClient(conn)
 	rv, err := client.Delete(context.Background(), req)
 
 	m.Secrets.(*usecase.SecretsUseCaseMock).AssertExpectations(t)
@@ -135,7 +135,7 @@ func TestCreateSecret(t *testing.T) {
 				mock.Anything,
 				mock.AnythingOfType("uuid.UUID"),
 				tc.secretName,
-				goph.DataKind_BINARY,
+				goph.DataKind_DATA_KIND_BINARY,
 				tc.metadata,
 				tc.data,
 			).
@@ -143,14 +143,14 @@ func TestCreateSecret(t *testing.T) {
 
 			conn := createTestServerWithFakeAuth(t, m)
 
-			req := &goph.CreateSecretRequest{
+			req := &goph.CreateRequest{
 				Name:     tc.secretName,
-				Kind:     goph.DataKind_BINARY,
+				Kind:     goph.DataKind_DATA_KIND_BINARY,
 				Metadata: tc.metadata,
 				Data:     tc.data,
 			}
 
-			client := goph.NewSecretsClient(conn)
+			client := goph.NewSecretsServiceClient(conn)
 			resp, err := client.Create(context.Background(), req)
 
 			require.NoError(t, err)
@@ -203,14 +203,14 @@ func TestCreateSecretWithBadRequest(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			conn := createTestServerWithFakeAuth(t, newUseCasesMock())
 
-			req := &goph.CreateSecretRequest{
+			req := &goph.CreateRequest{
 				Name:     tc.secretName,
-				Kind:     goph.DataKind_BINARY,
+				Kind:     goph.DataKind_DATA_KIND_BINARY,
 				Metadata: tc.metadata,
 				Data:     tc.data,
 			}
 
-			client := goph.NewSecretsClient(conn)
+			client := goph.NewSecretsServiceClient(conn)
 			_, err := client.Create(context.Background(), req)
 
 			requireEqualCode(t, codes.InvalidArgument, err)
@@ -221,8 +221,8 @@ func TestCreateSecretWithBadRequest(t *testing.T) {
 func TestCreateSecretFailsIfNoUserInfo(t *testing.T) {
 	conn := createTestServer(t, newUseCasesMock())
 
-	client := goph.NewSecretsClient(conn)
-	_, err := client.Create(context.Background(), &goph.CreateSecretRequest{})
+	client := goph.NewSecretsServiceClient(conn)
+	_, err := client.Create(context.Background(), &goph.CreateRequest{})
 
 	requireEqualCode(t, codes.Unauthenticated, err)
 }
@@ -253,7 +253,7 @@ func TestCreateServerOnUseCaseFailure(t *testing.T) {
 				mock.Anything,
 				mock.AnythingOfType("uuid.UUID"),
 				gophtest.SecretName,
-				goph.DataKind_BINARY,
+				goph.DataKind_DATA_KIND_BINARY,
 				[]byte(gophtest.Metadata),
 				[]byte(gophtest.TextData),
 			).
@@ -261,14 +261,14 @@ func TestCreateServerOnUseCaseFailure(t *testing.T) {
 
 			conn := createTestServerWithFakeAuth(t, m)
 
-			req := &goph.CreateSecretRequest{
+			req := &goph.CreateRequest{
 				Name:     gophtest.SecretName,
-				Kind:     goph.DataKind_BINARY,
+				Kind:     goph.DataKind_DATA_KIND_BINARY,
 				Metadata: []byte(gophtest.Metadata),
 				Data:     []byte(gophtest.TextData),
 			}
 
-			client := goph.NewSecretsClient(conn)
+			client := goph.NewSecretsServiceClient(conn)
 			_, err := client.Create(context.Background(), req)
 
 			requireEqualCode(t, tc.expected, err)
@@ -288,12 +288,12 @@ func TestListSecrets(t *testing.T) {
 				{
 					ID:   gophtest.CreateUUID(t, "7728154c-9400-4f1b-a2a3-01deb83ece05"),
 					Name: gophtest.SecretName,
-					Kind: goph.DataKind_BINARY,
+					Kind: goph.DataKind_DATA_KIND_BINARY,
 				},
 				{
 					ID:       gophtest.CreateUUID(t, "df566e25-43a5-4c34-9123-3931fb809b45"),
 					Name:     gophtest.SecretName + "ex",
-					Kind:     goph.DataKind_TEXT,
+					Kind:     goph.DataKind_DATA_KIND_TEXT,
 					Metadata: []byte(gophtest.Metadata),
 				},
 			},
@@ -317,8 +317,8 @@ func TestListSecrets(t *testing.T) {
 func TestListSecretsFailsIfNoUserInfo(t *testing.T) {
 	conn := createTestServer(t, newUseCasesMock())
 
-	client := goph.NewSecretsClient(conn)
-	_, err := client.List(context.Background(), &goph.ListSecretsRequest{})
+	client := goph.NewSecretsServiceClient(conn)
+	_, err := client.List(context.Background(), &goph.ListRequest{})
 
 	requireEqualCode(t, codes.Unauthenticated, err)
 }
@@ -339,7 +339,7 @@ func TestGetSecret(t *testing.T) {
 			secret: &entity.Secret{
 				ID:       gophtest.CreateUUID(t, "df566e25-43a5-4c34-9123-3931fb809b45"),
 				Name:     gophtest.SecretName,
-				Kind:     goph.DataKind_TEXT,
+				Kind:     goph.DataKind_DATA_KIND_TEXT,
 				Metadata: []byte(gophtest.Metadata),
 				Data:     []byte(gophtest.TextData),
 			},
@@ -349,7 +349,7 @@ func TestGetSecret(t *testing.T) {
 			secret: &entity.Secret{
 				ID:       gophtest.CreateUUID(t, "df566e25-43a5-4c34-9123-3931fb809b45"),
 				Name:     gophtest.SecretName,
-				Kind:     goph.DataKind_TEXT,
+				Kind:     goph.DataKind_DATA_KIND_TEXT,
 				Metadata: []byte(gophtest.Metadata),
 				Data:     []byte(gophtest.TextData),
 			},
@@ -370,9 +370,9 @@ func TestGetSecret(t *testing.T) {
 func TestGetSecretOnBadRequest(t *testing.T) {
 	conn := createTestServerWithFakeAuth(t, newUseCasesMock())
 
-	req := &goph.GetSecretRequest{Id: "xxx"}
+	req := &goph.GetRequest{Id: "xxx"}
 
-	client := goph.NewSecretsClient(conn)
+	client := goph.NewSecretsServiceClient(conn)
 	_, err := client.Get(context.Background(), req)
 
 	requireEqualCode(t, codes.InvalidArgument, err)
@@ -381,8 +381,8 @@ func TestGetSecretOnBadRequest(t *testing.T) {
 func TestGetSecretFailsIfNoUserInfo(t *testing.T) {
 	conn := createTestServer(t, newUseCasesMock())
 
-	client := goph.NewSecretsClient(conn)
-	_, err := client.Get(context.Background(), &goph.GetSecretRequest{})
+	client := goph.NewSecretsServiceClient(conn)
+	_, err := client.Get(context.Background(), &goph.GetRequest{})
 
 	requireEqualCode(t, codes.Unauthenticated, err)
 }
@@ -417,12 +417,12 @@ func TestGetSecretOnUsecaseFailure(t *testing.T) {
 func TestUpdateSecret(t *testing.T) {
 	tt := []struct {
 		name    string
-		req     *goph.UpdateSecretRequest
+		req     *goph.UpdateRequest
 		changed []string
 	}{
 		{
 			name: "Update all fields of a secret",
-			req: &goph.UpdateSecretRequest{
+			req: &goph.UpdateRequest{
 				Name:     gophtest.SecretName,
 				Metadata: []byte(gophtest.Metadata),
 				Data:     []byte(gophtest.TextData),
@@ -431,35 +431,35 @@ func TestUpdateSecret(t *testing.T) {
 		},
 		{
 			name: "Update secret's name",
-			req: &goph.UpdateSecretRequest{
+			req: &goph.UpdateRequest{
 				Name: gophtest.SecretName,
 			},
 			changed: []string{"name"},
 		},
 		{
 			name: "Update secret's metadata",
-			req: &goph.UpdateSecretRequest{
+			req: &goph.UpdateRequest{
 				Metadata: []byte(gophtest.Metadata),
 			},
 			changed: []string{"metadata"},
 		},
 		{
 			name: "Reset secret's metadata",
-			req: &goph.UpdateSecretRequest{
+			req: &goph.UpdateRequest{
 				Metadata: []byte(nil),
 			},
 			changed: []string{"metadata"},
 		},
 		{
 			name: "Update secret's data",
-			req: &goph.UpdateSecretRequest{
+			req: &goph.UpdateRequest{
 				Data: []byte(gophtest.TextData),
 			},
 			changed: []string{"data"},
 		},
 		{
 			name: "Update secret with maximum fields limits",
-			req: &goph.UpdateSecretRequest{
+			req: &goph.UpdateRequest{
 				Name:     strings.Repeat("#", v1.DefaultMaxSecretNameLength),
 				Metadata: []byte(strings.Repeat("#", v1.DefaultMetadataLimit)),
 				Data:     []byte(strings.Repeat("#", v1.DefaultDataLimit)),
@@ -493,7 +493,7 @@ func TestUpdateSecret(t *testing.T) {
 
 			conn := createTestServerWithFakeAuth(t, m)
 
-			client := goph.NewSecretsClient(conn)
+			client := goph.NewSecretsServiceClient(conn)
 			_, err = client.Update(context.Background(), tc.req)
 
 			m.Secrets.(*usecase.SecretsUseCaseMock).AssertExpectations(t)
@@ -506,12 +506,12 @@ func TestUpdateSecret(t *testing.T) {
 func TestUpdateSecretOnBadRequest(t *testing.T) {
 	tt := []struct {
 		name    string
-		req     *goph.UpdateSecretRequest
+		req     *goph.UpdateRequest
 		changed []string
 	}{
 		{
 			name: "Update fails if no mask specified",
-			req: &goph.UpdateSecretRequest{
+			req: &goph.UpdateRequest{
 				Id:   uuid.NewV4().String(),
 				Name: gophtest.SecretName,
 			},
@@ -519,7 +519,7 @@ func TestUpdateSecretOnBadRequest(t *testing.T) {
 		},
 		{
 			name: "Update fails if bad secret id provided",
-			req: &goph.UpdateSecretRequest{
+			req: &goph.UpdateRequest{
 				Id:   "xxx",
 				Name: gophtest.SecretName,
 			},
@@ -527,7 +527,7 @@ func TestUpdateSecretOnBadRequest(t *testing.T) {
 		},
 		{
 			name: "Update fails if empty name provided",
-			req: &goph.UpdateSecretRequest{
+			req: &goph.UpdateRequest{
 				Id:   uuid.NewV4().String(),
 				Name: "",
 			},
@@ -535,7 +535,7 @@ func TestUpdateSecretOnBadRequest(t *testing.T) {
 		},
 		{
 			name: "Update fails if too long name provided",
-			req: &goph.UpdateSecretRequest{
+			req: &goph.UpdateRequest{
 				Id:   uuid.NewV4().String(),
 				Name: strings.Repeat("#", v1.DefaultMaxSecretNameLength+1),
 			},
@@ -543,7 +543,7 @@ func TestUpdateSecretOnBadRequest(t *testing.T) {
 		},
 		{
 			name: "Update fails if too long metadata provided",
-			req: &goph.UpdateSecretRequest{
+			req: &goph.UpdateRequest{
 				Id:       uuid.NewV4().String(),
 				Metadata: []byte(strings.Repeat("#", v1.DefaultMetadataLimit+1)),
 			},
@@ -551,14 +551,14 @@ func TestUpdateSecretOnBadRequest(t *testing.T) {
 		},
 		{
 			name: "Update fails if empty data provided",
-			req: &goph.UpdateSecretRequest{
+			req: &goph.UpdateRequest{
 				Id: uuid.NewV4().String(),
 			},
 			changed: []string{"data"},
 		},
 		{
 			name: "Update fails if too long data provided",
-			req: &goph.UpdateSecretRequest{
+			req: &goph.UpdateRequest{
 				Id:   uuid.NewV4().String(),
 				Data: []byte(strings.Repeat("#", v1.DefaultDataLimit+1)),
 			},
@@ -575,7 +575,7 @@ func TestUpdateSecretOnBadRequest(t *testing.T) {
 
 			tc.req.UpdateMask = mask
 
-			client := goph.NewSecretsClient(conn)
+			client := goph.NewSecretsServiceClient(conn)
 			_, err = client.Update(context.Background(), tc.req)
 
 			requireEqualCode(t, codes.InvalidArgument, err)
@@ -586,8 +586,8 @@ func TestUpdateSecretOnBadRequest(t *testing.T) {
 func TestUpdateSecretFailsIfNoUserInfo(t *testing.T) {
 	conn := createTestServer(t, newUseCasesMock())
 
-	client := goph.NewSecretsClient(conn)
-	_, err := client.Update(context.Background(), &goph.UpdateSecretRequest{})
+	client := goph.NewSecretsServiceClient(conn)
+	_, err := client.Update(context.Background(), &goph.UpdateRequest{})
 
 	requireEqualCode(t, codes.Unauthenticated, err)
 }
@@ -633,7 +633,7 @@ func TestUpdateSecretOnUsecaseFailure(t *testing.T) {
 				Return(tc.ucErr)
 
 			conn := createTestServerWithFakeAuth(t, m)
-			req := &goph.UpdateSecretRequest{
+			req := &goph.UpdateRequest{
 				Id:   id.String(),
 				Name: gophtest.SecretName,
 			}
@@ -643,7 +643,7 @@ func TestUpdateSecretOnUsecaseFailure(t *testing.T) {
 
 			req.UpdateMask = mask
 
-			client := goph.NewSecretsClient(conn)
+			client := goph.NewSecretsServiceClient(conn)
 			_, err = client.Update(context.Background(), req)
 
 			m.Secrets.(*usecase.SecretsUseCaseMock).AssertExpectations(t)
@@ -661,9 +661,9 @@ func TestDeleteSecret(t *testing.T) {
 func TestDeleteSecretOnBadRequest(t *testing.T) {
 	conn := createTestServerWithFakeAuth(t, newUseCasesMock())
 
-	req := &goph.DeleteSecretRequest{Id: "xxx"}
+	req := &goph.DeleteRequest{Id: "xxx"}
 
-	client := goph.NewSecretsClient(conn)
+	client := goph.NewSecretsServiceClient(conn)
 	_, err := client.Delete(context.Background(), req)
 
 	requireEqualCode(t, codes.InvalidArgument, err)
@@ -672,8 +672,8 @@ func TestDeleteSecretOnBadRequest(t *testing.T) {
 func TestDeleteSecretFailsIfNoUserInfo(t *testing.T) {
 	conn := createTestServer(t, newUseCasesMock())
 
-	client := goph.NewSecretsClient(conn)
-	_, err := client.Delete(context.Background(), &goph.DeleteSecretRequest{})
+	client := goph.NewSecretsServiceClient(conn)
+	_, err := client.Delete(context.Background(), &goph.DeleteRequest{})
 
 	requireEqualCode(t, codes.Unauthenticated, err)
 }

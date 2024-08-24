@@ -30,7 +30,7 @@ func doCreateSecret(
 		mock.Anything,
 		owner,
 		gophtest.SecretName,
-		goph.DataKind_TEXT,
+		goph.DataKind_DATA_KIND_TEXT,
 		[]byte(gophtest.Metadata),
 		[]byte(gophtest.TextData),
 	).
@@ -41,7 +41,7 @@ func doCreateSecret(
 		context.Background(),
 		owner,
 		gophtest.SecretName,
-		goph.DataKind_TEXT,
+		goph.DataKind_DATA_KIND_TEXT,
 		[]byte(gophtest.Metadata),
 		[]byte(gophtest.TextData),
 	)
@@ -200,12 +200,12 @@ func TestListSecrets(t *testing.T) {
 					{
 						ID:   uuid.NewV4(),
 						Name: gophtest.SecretName,
-						Kind: goph.DataKind_BINARY,
+						Kind: goph.DataKind_DATA_KIND_BINARY,
 					},
 					{
 						ID:       uuid.NewV4(),
 						Name:     gophtest.SecretName + "ex",
-						Kind:     goph.DataKind_TEXT,
+						Kind:     goph.DataKind_DATA_KIND_TEXT,
 						Metadata: []byte(gophtest.Metadata),
 					},
 				},
@@ -254,7 +254,7 @@ func TestGetSecret(t *testing.T) {
 				secret: &entity.Secret{
 					ID:       uuid.NewV4(),
 					Name:     gophtest.SecretName,
-					Kind:     goph.DataKind_TEXT,
+					Kind:     goph.DataKind_DATA_KIND_TEXT,
 					Metadata: []byte(gophtest.Metadata),
 					Data:     []byte(gophtest.TextData),
 				},

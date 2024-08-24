@@ -108,7 +108,7 @@ func validateSecretData(data []byte) (string, bool) {
 
 // validateCreateSecretReq validates goph.validateCreateSecretReq.
 func validateCreateSecretReq(
-	req *goph.CreateSecretRequest,
+	req *goph.CreateRequest,
 ) (*errdetails.BadRequest, bool) {
 	br := &errdetails.BadRequest{}
 
@@ -148,7 +148,7 @@ func validateCreateSecretReq(
 
 // validateUpdateSecretReq validates goph.validateUpdateSecretReq.
 func validateUpdateSecretReq(
-	req *goph.UpdateSecretRequest,
+	req *goph.UpdateRequest,
 ) (uuid.UUID, *errdetails.BadRequest) {
 	var id uuid.UUID
 

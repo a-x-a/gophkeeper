@@ -14,11 +14,11 @@ const DefaultMaxMessageSize = DefaultDataLimit + DefaultMetadataLimit + 2*Defaul
 // RegisterRoutes injects new routes into the provided gRPC server.
 func RegisterRoutes(server *grpc.Server, useCases *usecase.UseCases) {
 	auth := NewAuthServer(useCases.Auth)
-	goph.RegisterAuthServer(server, auth)
+	goph.RegisterAuthServiceServer(server, auth)
 
 	secrets := NewSecretsServer(useCases.Secrets)
-	goph.RegisterSecretsServer(server, secrets)
+	goph.RegisterSecretsServiceServer(server, secrets)
 
 	users := NewUsersServer(useCases.Users)
-	goph.RegisterUsersServer(server, users)
+	goph.RegisterUsersServiceServer(server, users)
 }

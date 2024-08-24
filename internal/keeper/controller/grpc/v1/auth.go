@@ -14,7 +14,7 @@ import (
 
 // AuthServer provides implementation of the Auth API.
 type AuthServer struct {
-	goph.UnimplementedAuthServer
+	goph.UnimplementedAuthServiceServer
 	authUseCase usecase.Auth
 }
 

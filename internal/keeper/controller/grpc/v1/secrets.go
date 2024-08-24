@@ -15,7 +15,7 @@ import (
 
 // SecretsServer provides implementation of the Secrets API.
 type SecretsServer struct {
-	goph.UnimplementedSecretsServer
+	goph.UnimplementedSecretsServiceServer
 
 	secretsUseCase usecase.Secrets
 }
@@ -28,8 +28,8 @@ func NewSecretsServer(secrets usecase.Secrets) *SecretsServer {
 // Create creates new secret for a user.
 func (s SecretsServer) Create(
 	ctx context.Context,
-	req *goph.CreateSecretRequest,
-) (*goph.CreateSecretResponse, error) {
+	req *goph.CreateRequest,
+) (*goph.CreateResponse, error) {
 	owner := entity.UserFromContext(ctx)
 	if owner == nil {
 		return nil, status.Errorf(codes.Unauthenticated, entity.ErrInvalidCredentials.Error())
@@ -57,14 +57,14 @@ func (s SecretsServer) Create(
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	return &goph.CreateSecretResponse{Id: id.String()}, nil
+	return &goph.CreateResponse{Id: id.String()}, nil
 }
 
 // List retrieves list of the secrets stored a user.
 func (s SecretsServer) List(
 	ctx context.Context,
-	_ *goph.ListSecretsRequest,
-) (*goph.ListSecretsResponse, error) {
+	_ *goph.ListRequest,
+) (*goph.ListResponse, error) {
 	owner := entity.UserFromContext(ctx)
 	if owner == nil {
 		return nil, status.Errorf(codes.Unauthenticated, entity.ErrInvalidCredentials.Error())
@@ -85,14 +85,14 @@ func (s SecretsServer) List(
 		})
 	}
 
-	return &goph.ListSecretsResponse{Secrets: rv}, nil
+	return &goph.ListResponse{Secrets: rv}, nil
 }
 
 // Get returns particular secret with data.
 func (s SecretsServer) Get(
 	ctx context.Context,
-	req *goph.GetSecretRequest,
-) (*goph.GetSecretResponse, error) {
+	req *goph.GetRequest,
+) (*goph.GetResponse, error) {
 	owner := entity.UserFromContext(ctx)
 	if owner == nil {
 		return nil, status.Errorf(codes.Unauthenticated, entity.ErrInvalidCredentials.Error())
@@ -112,7 +112,7 @@ func (s SecretsServer) Get(
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	return &goph.GetSecretResponse{
+	return &goph.GetResponse{
 		Secret: &goph.Secret{
 			Id:       secret.ID.String(),
 			Name:     secret.Name,
@@ -126,8 +126,8 @@ func (s SecretsServer) Get(
 // Update updates particular secret stored by a user.
 func (s SecretsServer) Update(
 	ctx context.Context,
-	req *goph.UpdateSecretRequest,
-) (*goph.UpdateSecretResponse, error) {
+	req *goph.UpdateRequest,
+) (*goph.UpdateResponse, error) {
 	owner := entity.UserFromContext(ctx)
 	if owner == nil {
 		return nil, status.Errorf(codes.Unauthenticated, entity.ErrInvalidCredentials.Error())
@@ -164,14 +164,14 @@ func (s SecretsServer) Update(
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	return &goph.UpdateSecretResponse{}, nil
+	return &goph.UpdateResponse{}, nil
 }
 
 // Delete removes particular secret stored by a user.
 func (s SecretsServer) Delete(
 	ctx context.Context,
-	req *goph.DeleteSecretRequest,
-) (*goph.DeleteSecretResponse, error) {
+	req *goph.DeleteRequest,
+) (*goph.DeleteResponse, error) {
 	owner := entity.UserFromContext(ctx)
 	if owner == nil {
 		return nil, status.Errorf(codes.Unauthenticated, entity.ErrInvalidCredentials.Error())
@@ -190,5 +190,5 @@ func (s SecretsServer) Delete(
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	return &goph.DeleteSecretResponse{}, nil
+	return &goph.DeleteResponse{}, nil
 }
