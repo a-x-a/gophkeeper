@@ -7,7 +7,7 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
-var _ UsersClient = (*UsersClientMock)(nil)
+var _ UsersServiceClient = (*UsersClientMock)(nil)
 
 type UsersClientMock struct {
 	mock.Mock
@@ -15,14 +15,14 @@ type UsersClientMock struct {
 
 func (m *UsersClientMock) Register(
 	ctx context.Context,
-	in *RegisterUserRequest,
+	in *RegisterRequest,
 	opts ...grpc.CallOption,
-) (*RegisterUserResponse, error) {
+) (*RegisterResponse, error) {
 	args := m.Called(ctx, in, opts)
 
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
 
-	return args.Get(0).(*RegisterUserResponse), args.Error(1)
+	return args.Get(0).(*RegisterResponse), args.Error(1)
 }

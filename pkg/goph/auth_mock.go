@@ -7,7 +7,7 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
-var _ AuthClient = (*AuthClientMock)(nil)
+var _ AuthServiceClient = (*AuthClientMock)(nil)
 
 type AuthClientMock struct {
 	mock.Mock

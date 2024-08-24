@@ -7,7 +7,7 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
-var _ SecretsClient = (*SecretsClientMock)(nil)
+var _ SecretsServiceClient = (*SecretsClientMock)(nil)
 
 type SecretsClientMock struct {
 	mock.Mock
@@ -15,70 +15,70 @@ type SecretsClientMock struct {
 
 func (m *SecretsClientMock) Create(
 	ctx context.Context,
-	in *CreateSecretRequest,
+	in *CreateRequest,
 	opts ...grpc.CallOption,
-) (*CreateSecretResponse, error) {
+) (*CreateResponse, error) {
 	args := m.Called(ctx, in, opts)
 
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
 
-	return args.Get(0).(*CreateSecretResponse), args.Error(1)
+	return args.Get(0).(*CreateResponse), args.Error(1)
 }
 
 func (m *SecretsClientMock) List(
 	ctx context.Context,
-	in *ListSecretsRequest,
+	in *ListRequest,
 	opts ...grpc.CallOption,
-) (*ListSecretsResponse, error) {
+) (*ListResponse, error) {
 	args := m.Called(ctx, in, opts)
 
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
 
-	return args.Get(0).(*ListSecretsResponse), args.Error(1)
+	return args.Get(0).(*ListResponse), args.Error(1)
 }
 
 func (m *SecretsClientMock) Get(
 	ctx context.Context,
-	in *GetSecretRequest,
+	in *GetRequest,
 	opts ...grpc.CallOption,
-) (*GetSecretResponse, error) {
+) (*GetResponse, error) {
 	args := m.Called(ctx, in, opts)
 
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
 
-	return args.Get(0).(*GetSecretResponse), args.Error(1)
+	return args.Get(0).(*GetResponse), args.Error(1)
 }
 
 func (m *SecretsClientMock) Update(
 	ctx context.Context,
-	in *UpdateSecretRequest,
+	in *UpdateRequest,
 	opts ...grpc.CallOption,
-) (*UpdateSecretResponse, error) {
+) (*UpdateResponse, error) {
 	args := m.Called(ctx, in, opts)
 
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
 
-	return args.Get(0).(*UpdateSecretResponse), args.Error(1)
+	return args.Get(0).(*UpdateResponse), args.Error(1)
 }
 
 func (m *SecretsClientMock) Delete(
 	ctx context.Context,
-	in *DeleteSecretRequest,
+	in *DeleteRequest,
 	opts ...grpc.CallOption,
-) (*DeleteSecretResponse, error) {
+) (*DeleteResponse, error) {
 	args := m.Called(ctx, in, opts)
 
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
 
-	return args.Get(0).(*DeleteSecretResponse), args.Error(1)
+	return args.Get(0).(*DeleteResponse), args.Error(1)
 }
