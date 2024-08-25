@@ -19,7 +19,7 @@ keeper:
 	go build -o $(BUILD_FOLDER)/$@ cmd/$@/*.go
 
 .PHONY: keeperctl ## Build the gophkeeper client
-keepctl:
+keeperctl:
 	./scripts/build-client $(CLIENT_VERSION)
 
 .PHONY: all ## Build whole product.
