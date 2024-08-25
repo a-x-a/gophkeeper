@@ -3,6 +3,7 @@ module github.com/a-x-a/gophkeeper
 go 1.20
 
 require (
+	github.com/cheynewallace/tabby v1.1.1
 	github.com/georgysavva/scany/v2 v2.1.3
 	github.com/gkampitakis/go-snaps v0.4.10
 	github.com/golang-jwt/jwt/v5 v5.2.1
@@ -11,6 +12,7 @@ require (
 	github.com/pashagolub/pgxmock/v2 v2.12.0
 	github.com/rs/zerolog v1.33.0
 	github.com/satori/go.uuid v1.2.0
+	github.com/spf13/cobra v1.8.1
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.9.0
@@ -25,6 +27,7 @@ require (
 	github.com/gkampitakis/ciinfo v0.3.0 // indirect
 	github.com/gkampitakis/go-diff v1.3.2 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/puddle/v2 v2.2.1 // indirect
