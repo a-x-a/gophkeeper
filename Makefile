@@ -59,3 +59,11 @@ update-snapshots: ## Update unit-tests's snapshots
 ssl: ## Generate SSL certificates for secure communications
 	./scripts/gen-ca
 	./scripts/issue-crt
+
+.PHONY: run
+run: stop ## Run the project in docker compose
+	docker compose -f deploy/docker-compose.yaml up -d --build
+
+.PHONY: stop
+stop: ## Stop the running project and destroy containers
+	docker compose -f deploy/docker-compose.yaml down
