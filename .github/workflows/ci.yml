@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**.md"
+      - ".gitignore"
+      - "LICENSE"
+      - "docs/**"
+  pull_request:
+    paths-ignore:
+      - "**.md"
+      - ".gitignore"
+      - "LICENSE"
+      - "docs/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: golang:1.20
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Generate dev certificates
+        run: make ssl
+
+      - name: Build keeper
+        run: make keeper
+
+      - name: Build keeperctl
+        run: make keeperctl
+
+      - name: Run unit tests
+        run: make test
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.56
+
+  integrate:
+    runs-on: ubuntu-latest
+    container: golang:1.20
+
+    env:
+      DATABASE_URI: postgres://postgres:postgres@postgres:5432/goph?sslmode=disable
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: goph
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install golang-migrate
+        run: go install -tags "postgres" github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+
+      - name: Test migrations up
+        run: migrate -database ${DATABASE_URI} -path ./migrations up
+
+      - name: Test migrations down
+        run: migrate -database ${DATABASE_URI} -path ./migrations down -all

@@ -18,12 +18,12 @@ proto: ## Generate gRPC protobuf bindings
 keeper:
 	go build -o $(BUILD_FOLDER)/$@ cmd/$@/*.go
 
-.PHONY: keepctl ## Build the goph-keeper client
+.PHONY: keeperctl ## Build the gophkeeper client
 keepctl:
 	./scripts/build-client $(CLIENT_VERSION)
 
 .PHONY: all ## Build whole product.
-all: keeper keepctl
+all: keeper keeperctl
 
 .PHONY: download
 download: ## Download go.mod dependencies

@@ -8,7 +8,7 @@ if [[ -z "$build_version" ]]; then
   exit 1
 fi
 
-package_name=keepctl
+package_name=keeperctl
 platforms=("windows/amd64" "darwin/amd64" "darwin/arm64" "linux/amd64")
 
 build_folder=./dist
