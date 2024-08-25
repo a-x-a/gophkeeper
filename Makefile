@@ -1,6 +1,7 @@
 DEFAULT_GOAL := help
 
 BUILD_FOLDER = dist
+CRT_FOLDER = ssl/ca
 
 # Build info
 CLIENT_VERSION ?= 0.1.0
@@ -17,6 +18,13 @@ proto: ## Generate gRPC protobuf bindings
 keeper:
 	go build -o $(BUILD_FOLDER)/$@ cmd/$@/*.go
 
+.PHONY: keepctl ## Build the goph-keeper client
+keepctl:
+	./scripts/build-client $(CLIENT_VERSION)
+
+.PHONY: all ## Build whole product.
+all: keeper keepctl
+
 .PHONY: download
 download: ## Download go.mod dependencies
 	echo Downloading go.mod dependencies
@@ -24,7 +32,7 @@ download: ## Download go.mod dependencies
 
 .PHONY: clean
 clean:
-	rm -rf $(BUILD_FOLDER)
+	rm -rf $(BUILD_FOLDER) $(CRT_FOLDER)
 
 .PHONY: install-tools
 install-tools: ## Install additional linters and dev tools
@@ -46,3 +54,8 @@ test: ## Run unit tests
 .PHONY: update-snapshots
 update-snapshots: ## Update unit-tests's snapshots
 	@UPDATE_SNAPS=true go test -v -race ./... -coverprofile=coverage.out.tmp -covermode atomic
+
+.PHONY: ssl
+ssl: ## Generate SSL certificates for secure communications
+	./scripts/gen-ca
+	./scripts/issue-crt
