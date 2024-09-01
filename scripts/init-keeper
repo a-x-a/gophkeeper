@@ -1,0 +1,6 @@
+#!/usr/bin/bash
+#
+# The keeper service initialization routine.
+
+# Execute migrations to initialize Postgres database.
+./migrate -database $DATABASE_URI -path ./migrations up
